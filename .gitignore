@@ -5,7 +5,7 @@ venv/
 .env
 
 # Modèles ML
-models/*.pkl
+# models/*.pkl
 
 # Fichiers OS
 .DS_Store
