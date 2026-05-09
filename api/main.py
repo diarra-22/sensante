@@ -27,6 +27,15 @@ app = FastAPI(
     description="Assistant pré-diagnostic médical pour le Sénégal",
     version="0.2.0"
 )
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],      # En dev : accepter tout
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Chargement du modèle (une seule fois au démarrage) ---
 print("Chargement du modèle...")
@@ -40,6 +49,16 @@ print(f"Modèle chargé : {list(model.classes_)}")
 @app.get("/health")
 def health_check():
     return {"status": "ok", "message": "SenSante API is running"}
+
+@app.get("/model-info")
+def model_info():
+    """Informations sur le modèle chargé."""
+    return {
+        "type": type(model).__name__,
+        "nombre_arbres": model.n_estimators,
+        "classes": list(model.classes_),
+        "nombre_features": model.n_features_in_
+    }
 
 @app.post("/predict", response_model=DiagnosticOutput)
 def predict(patient: PatientInput):
